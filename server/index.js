@@ -3,7 +3,6 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { randomBytes } from 'node:crypto';
 
 import productsRouter from './routes/products.js';
 import ordersRouter from './routes/orders.js';
@@ -34,10 +33,9 @@ const SERVERLESS = !!process.env.VERCEL;
     console.error('        Set strong values in your .env before deploying.\n');
     process.exit(1);
   }
-  // Serverless or dev: keep running, but never sign tokens with the public default.
-  if (!process.env.JWT_SECRET || WEAK.JWT_SECRET === process.env.JWT_SECRET) {
-    process.env.JWT_SECRET = randomBytes(48).toString('hex');
-  }
+  // Serverless/dev: keep running. The token secret is resolved deterministically in
+  // middleware/auth.js (never a per-instance random value, which would break login
+  // across serverless instances), so we only warn here.
   console.warn(`\n[WARNING] Insecure/unset ${problems.join(', ')}. Set them in your host's env vars before a real launch.\n`);
 })();
 

@@ -1,8 +1,21 @@
 import jwt from 'jsonwebtoken';
+import { createHash } from 'node:crypto';
 
-// Read the secret at call time (not import time) so the server can set/generate it
-// during startup before any request is handled.
-const secret = () => process.env.JWT_SECRET || 'dev-insecure-secret';
+// Resolve the signing secret at call time. It MUST be stable across processes and
+// serverless instances, otherwise a token signed by one instance fails to verify on
+// another (login succeeds, then the next request 401s). Priority:
+//   1. JWT_SECRET env var (set this in production).
+//   2. Deterministic value derived from ADMIN_PASSWORD, so setting a custom admin
+//      password alone is enough to get a stable, non-public secret.
+//   3. A public dev-only fallback (fine for local dev; never for a real launch).
+const PLACEHOLDER = 'change-me-to-a-long-random-string';
+function secret() {
+  const s = process.env.JWT_SECRET;
+  if (s && s !== PLACEHOLDER) return s;
+  const pw = process.env.ADMIN_PASSWORD;
+  if (pw && pw !== 'admin123') return createHash('sha256').update('jt-shirts:' + pw).digest('hex');
+  return 'dev-insecure-secret';
+}
 
 export function signAdminToken() {
   return jwt.sign({ role: 'admin' }, secret(), { expiresIn: '12h' });
