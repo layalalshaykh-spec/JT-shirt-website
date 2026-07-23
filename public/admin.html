@@ -45,7 +45,7 @@
 <p style="color:var(--text-secondary);margin-bottom:20px;font-size:14px;">Enter the admin password to manage products, orders, and messages.</p>
 <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="adminPassword" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"></div>
 <button class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
-<p style="margin-top:16px;font-size:12px;color:var(--text-muted);">Default password is <code>admin123</code> unless changed in the .env file.</p>
+<p style="margin-top:16px;font-size:12px;color:var(--text-muted);">Access is configured by the business via the <code>ADMIN_PASSWORD</code> environment variable.</p>
 </div>
 </div>
 

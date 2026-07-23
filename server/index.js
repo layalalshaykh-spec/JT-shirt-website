@@ -13,6 +13,29 @@ import adminRouter from './routes/admin.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicDir = join(__dirname, '..', 'public');
 
+// ---- Credential safety check ----
+// Never let the app run in production with the public default password/secret.
+const WEAK = { ADMIN_PASSWORD: 'admin123', JWT_SECRET: 'dev-insecure-secret' };
+(function checkSecrets() {
+  const prod = process.env.NODE_ENV === 'production';
+  const problems = [];
+  for (const key of Object.keys(WEAK)) {
+    const val = process.env[key];
+    if (!val || val === WEAK[key] || val === 'change-me-to-a-long-random-string') {
+      problems.push(key);
+    }
+  }
+  if (problems.length && prod) {
+    console.error(`\n[FATAL] Refusing to start in production with unset/default ${problems.join(', ')}.`);
+    console.error('        Set strong values in your .env before deploying.\n');
+    process.exit(1);
+  }
+  if (problems.length) {
+    console.warn(`\n[WARNING] Using insecure default(s) for ${problems.join(', ')}. Fine for local dev only.`);
+    console.warn('          Set strong values in .env (and NODE_ENV=production) before any public deploy.\n');
+  }
+})();
+
 const app = express();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '256kb' }));
