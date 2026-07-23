@@ -3,6 +3,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { randomBytes } from 'node:crypto';
 
 import productsRouter from './routes/products.js';
 import ordersRouter from './routes/orders.js';
@@ -14,26 +15,30 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicDir = join(__dirname, '..', 'public');
 
 // ---- Credential safety check ----
-// Never let the app run in production with the public default password/secret.
+// Never let a self-hosted production server run with the public default secrets.
+// On serverless (Vercel) we cannot process.exit (it would 500 every request), so
+// there we warn and auto-generate an ephemeral JWT secret instead of hard-failing.
 const WEAK = { ADMIN_PASSWORD: 'admin123', JWT_SECRET: 'dev-insecure-secret' };
+const SERVERLESS = !!process.env.VERCEL;
 (function checkSecrets() {
   const prod = process.env.NODE_ENV === 'production';
   const problems = [];
   for (const key of Object.keys(WEAK)) {
     const val = process.env[key];
-    if (!val || val === WEAK[key] || val === 'change-me-to-a-long-random-string') {
-      problems.push(key);
-    }
+    if (!val || val === WEAK[key] || val === 'change-me-to-a-long-random-string') problems.push(key);
   }
-  if (problems.length && prod) {
+  if (!problems.length) return;
+
+  if (prod && !SERVERLESS) {
     console.error(`\n[FATAL] Refusing to start in production with unset/default ${problems.join(', ')}.`);
     console.error('        Set strong values in your .env before deploying.\n');
     process.exit(1);
   }
-  if (problems.length) {
-    console.warn(`\n[WARNING] Using insecure default(s) for ${problems.join(', ')}. Fine for local dev only.`);
-    console.warn('          Set strong values in .env (and NODE_ENV=production) before any public deploy.\n');
+  // Serverless or dev: keep running, but never sign tokens with the public default.
+  if (!process.env.JWT_SECRET || WEAK.JWT_SECRET === process.env.JWT_SECRET) {
+    process.env.JWT_SECRET = randomBytes(48).toString('hex');
   }
+  console.warn(`\n[WARNING] Insecure/unset ${problems.join(', ')}. Set them in your host's env vars before a real launch.\n`);
 })();
 
 const app = express();
@@ -86,8 +91,14 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: { code: 'INTERNAL', message: 'Something went wrong' } });
 });
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`JT Shirts store running at http://localhost:${PORT}`);
-  console.log(`Admin panel at http://localhost:${PORT}/admin.html`);
-});
+// On a normal host we listen on a port. On Vercel the platform invokes the
+// exported app as a serverless handler, so we skip listen there.
+if (!SERVERLESS) {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`JT Shirts store running at http://localhost:${PORT}`);
+    console.log(`Admin panel at http://localhost:${PORT}/admin.html`);
+  });
+}
+
+export default app;

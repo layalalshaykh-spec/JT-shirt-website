@@ -8,7 +8,9 @@ import { fileURLToPath } from 'node:url';
 import { seedProducts, seedPrograms } from './seed-data.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dataDir = join(__dirname, '..', 'data');
+// On serverless hosts the project directory is read-only; only /tmp is writable
+// (and ephemeral, so data does not persist across cold starts there).
+const dataDir = process.env.VERCEL ? '/tmp/jt-data' : join(__dirname, '..', 'data');
 mkdirSync(dataDir, { recursive: true });
 
 const db = new DatabaseSync(join(dataDir, 'store.db'));
