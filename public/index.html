@@ -32,7 +32,8 @@
 <li><a data-nav="blog" onclick="showPage('blog')">Blog</a></li>
 </ul>
 <div class="nav-actions">
-<a class="btn btn-primary btn-sm hide-sm" id="navQuote" onclick="JTAI && JTAI.openQuote()" style="margin-right:4px;">Get Instant Quote</a>
+<a class="btn btn-primary btn-sm hide-sm" id="navQuote" onclick="openInstantQuote()" style="margin-right:4px;">Get Instant Quote</a>
+<a class="btn btn-outline btn-sm hide-sm" onclick="openLogin()" style="margin-right:4px;"><i data-lucide="lock" style="width:15px;height:15px;"></i> Login</a>
 <button class="nav-btn" onclick="toggleTheme()" aria-label="Toggle theme">
 <i data-lucide="sun" class="theme-icon-light"></i>
 <i data-lucide="moon" class="theme-icon-dark hidden"></i>
@@ -64,7 +65,8 @@
 <li><a onclick="showPage('mockup'); toggleMobileMenu();">Free Mockup</a></li>
 <li><a onclick="showPage('blog'); toggleMobileMenu();">Blog</a></li>
 <li><a onclick="showPage('contact'); toggleMobileMenu();">Contact</a></li>
-<li><a onclick="showPage('contact'); toggleMobileMenu();" style="color:var(--primary);">Get a Quote</a></li>
+<li><a onclick="openLogin(); toggleMobileMenu();"><i data-lucide="lock" style="width:15px;height:15px;vertical-align:-2px;"></i> Login</a></li>
+<li><a onclick="toggleMobileMenu(); openInstantQuote();" style="color:var(--primary);">Get Instant Quote</a></li>
 </ul>
 </div>
 

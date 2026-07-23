@@ -112,6 +112,15 @@ function showPage(pageName) {
 }
 // Default hero CTA action; ai.js reassigns this to a personalized destination.
 function heroCtaAction() { showPage('shop'); }
+
+// Robust entry point for the quote builder. Works even if ai.js is still loading
+// or failed: falls back to the contact page instead of silently doing nothing.
+function openInstantQuote() {
+  if (window.JTAI && typeof JTAI.openQuote === 'function') JTAI.openQuote();
+  else showPage('contact');
+}
+// Open the admin login in a new tab.
+function openLogin() { window.open('/admin.html', '_blank', 'noopener'); }
 function handleInitialRoute() {
   const hash = (location.hash || '').replace('#', '');
   if (['shop', 'programs', 'audit', 'mockup', 'blog', 'contact'].includes(hash)) showPage(hash);
