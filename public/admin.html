@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JT Shirts - Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+.admin-shell { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
+.admin-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+.admin-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.admin-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
+.admin-stat { background: var(--light); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+.admin-stat-label { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.admin-stat-value { font-family: var(--font-head); font-size: 30px; font-weight: 900; margin-top: 8px; }
+.admin-card { background: var(--light); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; }
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th, .admin-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: top; }
+.admin-table th { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+.login-wrap { max-width: 420px; margin: 120px auto; }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.status-pill { font-family: var(--font-mono); font-size: 11px; padding: 3px 10px; border-radius: 100px; text-transform: uppercase; font-weight: 700; }
+.status-paid { background: rgba(34,197,94,0.12); color: var(--success); }
+.status-processing { background: rgba(255,215,0,0.15); color: #B8860B; }
+.status-shipped { background: rgba(255,107,0,0.12); color: var(--primary); }
+.status-delivered { background: rgba(30,58,95,0.12); color: var(--secondary); }
+.status-cancelled { background: rgba(239,68,68,0.12); color: #EF4444; }
+.admin-table-wrap { overflow-x: auto; }
+@media (max-width: 768px) { .admin-stat-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Login -->
+<div id="loginView" class="login-wrap">
+<div class="contact-form">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+<div class="nav-logo-icon">JT</div>
+<div class="nav-logo-text" style="font-size:20px;font-weight:800;">JT <span style="color:var(--primary)">Shirts</span> Admin</div>
+</div>
+<p style="color:var(--text-secondary);margin-bottom:20px;font-size:14px;">Enter the admin password to manage products, orders, and messages.</p>
+<div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="adminPassword" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+<button class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
+<p style="margin-top:16px;font-size:12px;color:var(--text-muted);">Default password is <code>admin123</code> unless changed in the .env file.</p>
+</div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashView" class="admin-shell hidden">
+<div class="admin-top">
+<div style="display:flex;align-items:center;gap:10px;">
+<div class="nav-logo-icon">JT</div>
+<div class="nav-logo-text" style="font-size:20px;font-weight:800;">Admin Dashboard</div>
+</div>
+<div style="display:flex;gap:10px;">
+<a class="btn btn-outline btn-sm" href="/" target="_blank" rel="noopener"><i data-lucide="external-link" style="width:16px;height:16px;"></i> View Store</a>
+<button class="btn btn-ghost btn-sm" onclick="doLogout()"><i data-lucide="log-out" style="width:16px;height:16px;"></i> Sign Out</button>
+</div>
+</div>
+
+<div class="admin-stat-grid" id="statGrid"></div>
+
+<div class="admin-tabs">
+<button class="btn btn-primary btn-sm" data-tab="products" onclick="switchTab('products')">Products</button>
+<button class="btn btn-outline btn-sm" data-tab="orders" onclick="switchTab('orders')">Orders</button>
+<button class="btn btn-outline btn-sm" data-tab="messages" onclick="switchTab('messages')">Messages</button>
+</div>
+
+<!-- Products -->
+<div class="tab-panel active" id="tab-products">
+<div class="admin-card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+<h3 style="font-family:var(--font-head);font-weight:800;">Product Catalog</h3>
+<button class="btn btn-primary btn-sm" onclick="openProductForm()"><i data-lucide="plus" style="width:16px;height:16px;"></i> Add Product</button>
+</div>
+<div class="admin-table-wrap">
+<table class="admin-table">
+<thead><tr><th>Product</th><th>Type</th><th>Category</th><th>Pricing</th><th>Min</th><th></th></tr></thead>
+<tbody id="productsBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- Orders -->
+<div class="tab-panel" id="tab-orders">
+<div class="admin-card">
+<h3 style="font-family:var(--font-head);font-weight:800;margin-bottom:16px;">Orders</h3>
+<div class="admin-table-wrap">
+<table class="admin-table">
+<thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+<tbody id="ordersBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- Messages -->
+<div class="tab-panel" id="tab-messages">
+<div class="admin-card">
+<h3 style="font-family:var(--font-head);font-weight:800;margin-bottom:16px;">Contact Messages</h3>
+<div class="admin-table-wrap">
+<table class="admin-table">
+<thead><tr><th>From</th><th>Inquiry</th><th>Message</th><th>Date</th><th></th></tr></thead>
+<tbody id="messagesBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Product form modal -->
+<div class="modal-overlay" id="productModal" onclick="if(event.target===event.currentTarget)closeProductForm()">
+<div class="modal">
+<div class="modal-header">
+<div class="modal-title" id="productModalTitle">Add Product</div>
+<button class="modal-close" onclick="closeProductForm()"><i data-lucide="x"></i></button>
+</div>
+<input type="hidden" id="pfId">
+<div class="form-row">
+<div class="form-group"><label class="form-label">Type</label><select class="form-select" id="pfType" onchange="onTypeChange()"><option value="item">Catalog item (volume tiers)</option><option value="program">Program (flat price)</option></select></div>
+<div class="form-group"><label class="form-label">Category</label><input class="form-input" id="pfCategory" placeholder="Polos"></div>
+</div>
+<div class="form-group"><label class="form-label">Name *</label><input class="form-input" id="pfName"></div>
+
+<div id="pfItemFields">
+<div class="form-group"><label class="form-label">Volume tier prices ($ / unit)</label>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+<div><small style="color:var(--text-muted);">25-49</small><input class="form-input" id="pfP25" type="number" step="0.01" placeholder="24.99"></div>
+<div><small style="color:var(--text-muted);">50-99</small><input class="form-input" id="pfP50" type="number" step="0.01" placeholder="21.99"></div>
+<div><small style="color:var(--text-muted);">100+</small><input class="form-input" id="pfP100" type="number" step="0.01" placeholder="18.99"></div>
+</div></div>
+<div class="form-group"><label class="form-label">Sizes (comma separated)</label><input class="form-input" id="pfSizes" placeholder="S, M, L, XL, 2XL, 3XL"></div>
+<div class="form-group"><label class="form-label">Colors (name:hex, comma separated)</label><input class="form-input" id="pfColors" placeholder="Black:#0E0E0C, Navy:#1E3A5F"></div>
+</div>
+
+<div id="pfProgramFields" style="display:none;">
+<div class="form-row">
+<div class="form-group"><label class="form-label">Flat price ($)</label><input class="form-input" id="pfFlatPrice" type="number" step="1" placeholder="1249"></div>
+<div class="form-group"><label class="form-label">Tier label</label><input class="form-input" id="pfTierLabel" placeholder="Starter"></div>
+</div>
+<div class="form-group"><label class="form-label">Features (comma separated)</label><input class="form-input" id="pfFeatures" placeholder="50 custom polos, 50 embroidered caps"></div>
+<div class="form-group"><label class="form-label">Focus</label><input class="form-input" id="pfFocus" placeholder="Core workforce"></div>
+</div>
+
+<div class="form-group"><label class="form-label">Image URL</label><input class="form-input" id="pfImage" placeholder="https://..."></div>
+<div class="form-group"><label class="form-label">Badges (comma separated)</label><input class="form-input" id="pfBadges" placeholder="new, sale, bestseller"></div>
+<div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="pfDescription"></textarea></div>
+<button class="btn btn-primary btn-full" id="pfSave" onclick="saveProduct()">Save Product</button>
+</div>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

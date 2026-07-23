@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JT Shirts — B2B Custom Workwear & Uniform Programs | Made in USA</title>
+<meta name="description" content="Custom uniforms engineered for crews on construction sites, manufacturing floors, and service routes. Volume pricing, 25-unit minimums, embroidered branding. Made in USA.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="/css/styles.css?v=3">
+<link rel="stylesheet" href="/css/pages.css?v=3">
+<link rel="stylesheet" href="/css/ai.css?v=3">
+<link rel="stylesheet" href="/css/hero.css?v=1">
+</head>
+<body>
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Navigation -->
+<nav class="nav" id="navbar">
+<div class="container">
+<div class="nav-inner">
+<a class="nav-logo" onclick="showPage('home')">
+<div class="nav-logo-icon">JT</div>
+<div class="nav-logo-text">JT <span>Shirts</span></div>
+</a>
+<ul class="nav-links">
+<li><a data-nav="shop" onclick="showPage('shop')">Catalog</a></li>
+<li><a data-nav="programs" onclick="showPage('programs')">Programs</a></li>
+<li><a data-nav="audit" onclick="showPage('audit')">Free Audit</a></li>
+<li><a data-nav="mockup" onclick="showPage('mockup')">Free Mockup</a></li>
+<li><a data-nav="blog" onclick="showPage('blog')">Blog</a></li>
+</ul>
+<div class="nav-actions">
+<a class="btn btn-primary btn-sm hide-sm" id="navQuote" onclick="JTAI && JTAI.openQuote()" style="margin-right:4px;">Get Instant Quote</a>
+<button class="nav-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+<i data-lucide="sun" class="theme-icon-light"></i>
+<i data-lucide="moon" class="theme-icon-dark hidden"></i>
+</button>
+<button class="nav-btn nav-cart" onclick="toggleCart()" aria-label="Cart">
+<i data-lucide="shopping-bag"></i>
+<span class="nav-cart-count hidden" id="cartCount">0</span>
+</button>
+<button class="nav-btn mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+<i data-lucide="menu"></i>
+</button>
+</div>
+</div>
+</div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="toggleMobileMenu()"></div>
+<div class="mobile-menu" id="mobileMenu">
+<div class="mobile-menu-header">
+<div class="nav-logo-text" style="font-size:20px;font-weight:800;">JT <span style="color:var(--primary)">Shirts</span></div>
+<button class="nav-btn" onclick="toggleMobileMenu()" aria-label="Close menu"><i data-lucide="x"></i></button>
+</div>
+<ul class="mobile-menu-links">
+<li><a onclick="showPage('home'); toggleMobileMenu();">Home</a></li>
+<li><a onclick="showPage('shop'); toggleMobileMenu();">Catalog</a></li>
+<li><a onclick="showPage('programs'); toggleMobileMenu();">Programs</a></li>
+<li><a onclick="showPage('audit'); toggleMobileMenu();">Free Audit</a></li>
+<li><a onclick="showPage('mockup'); toggleMobileMenu();">Free Mockup</a></li>
+<li><a onclick="showPage('blog'); toggleMobileMenu();">Blog</a></li>
+<li><a onclick="showPage('contact'); toggleMobileMenu();">Contact</a></li>
+<li><a onclick="showPage('contact'); toggleMobileMenu();" style="color:var(--primary);">Get a Quote</a></li>
+</ul>
+</div>
+
+<!-- Cart Sidebar -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+<div class="cart-header">
+<div class="cart-title">Your Order (<span id="cartSidebarCount">0</span>)</div>
+<button class="cart-close" onclick="toggleCart()" aria-label="Close cart"><i data-lucide="x"></i></button>
+</div>
+<div class="cart-items" id="cartItems"></div>
+<div class="cart-footer" id="cartFooter" style="display:none;">
+<div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+<div class="cart-shipping"><span>Shipping</span><span id="cartShipping">Calculated at checkout</span></div>
+<div class="cart-total"><span>Total</span><span id="cartTotal">$0.00</span></div>
+<button class="btn btn-primary btn-full" onclick="goToCheckout()">
+<i data-lucide="arrow-right" style="width:18px;height:18px;"></i> Proceed to Checkout
+</button>
+<p class="cart-note"><i data-lucide="truck" style="width:14px;height:14px;"></i> Free shipping over $<span id="cartFreeThreshold">500</span> · 25-unit minimum per item</p>
+</div>
+</div>
+
+<!-- Size Guide Modal -->
+<div class="modal-overlay" id="sizeModal" onclick="closeSizeModal(event)">
+<div class="modal" onclick="event.stopPropagation()">
+<div class="modal-header">
+<div class="modal-title">Size Guide</div>
+<button class="modal-close" onclick="closeSizeModal()" aria-label="Close modal"><i data-lucide="x"></i></button>
+</div>
+<p style="color:var(--text-secondary);margin-bottom:16px;">All measurements are in inches. Standard US workwear sizing.</p>
+<table class="size-table">
+<thead><tr><th>Size</th><th>Chest</th><th>Length</th><th>Sleeve</th><th>Shoulder</th></tr></thead>
+<tbody>
+<tr><td>S</td><td>36-38</td><td>28</td><td>8.5</td><td>17</td></tr>
+<tr><td>M</td><td>38-40</td><td>29</td><td>9</td><td>18</td></tr>
+<tr><td>L</td><td>40-42</td><td>30</td><td>9.5</td><td>19</td></tr>
+<tr><td>XL</td><td>42-44</td><td>31</td><td>10</td><td>20</td></tr>
+<tr><td>2XL</td><td>44-46</td><td>32</td><td>10.5</td><td>21</td></tr>
+<tr><td>3XL</td><td>46-48</td><td>33</td><td>11</td><td>22</td></tr>
+</tbody>
+</table>
+<p style="color:var(--text-muted);margin-top:16px;font-size:13px;">Need a size run for a whole crew? We map sizes per role during the audit. Contact salesdept@jtshirts.net.</p>
+</div>
+</div>
+
+<!-- ==================== HOME PAGE ==================== -->
+<div class="page active" id="page-home">
+<section class="hero hero-premium" id="heroSection">
+<canvas class="hero-canvas" id="heroCanvas"></canvas>
+<div class="hero-blob blob-a"></div>
+<div class="hero-blob blob-b"></div>
+<div class="hero-blob blob-c"></div>
+<div class="hero-grid-lines"></div>
+<div class="hero-cursor-light" id="heroLight"></div>
+<div class="container">
+<div class="hero-grid">
+<div class="hero-content">
+<div class="hero-badge animate-fade-in-up"><i data-lucide="factory" style="width:16px;height:16px;"></i> B2B Workwear · Made in USA</div>
+<h1 class="hero-title animate-fade-in-up animate-delay-1">Built for the<br><span>workday</span> ahead.</h1>
+<p class="hero-desc animate-fade-in-up animate-delay-2">Custom uniforms engineered for crews on construction sites, manufacturing floors, and service routes. Cost down 10 to 30 percent. Brand consistency locked across every shift.</p>
+<div class="hero-cta-group animate-fade-in-up animate-delay-3">
+<a class="btn btn-primary btn-lg" id="heroCta" onclick="heroCtaAction()"><span id="heroCtaText">Configure Your Uniform</span> <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
+<a class="btn btn-outline btn-lg" onclick="showPage('audit')">Get a Free Audit</a>
+</div>
+<div class="hero-stats animate-fade-in-up animate-delay-4">
+<div class="hero-stat"><div class="hero-stat-value">30%</div><div class="hero-stat-label">Avg. Cost Reduction</div></div>
+<div class="hero-stat"><div class="hero-stat-value">14d</div><div class="hero-stat-label">Production Lead</div></div>
+<div class="hero-stat"><div class="hero-stat-value">25</div><div class="hero-stat-label">Min. Order / Item</div></div>
+<div class="hero-stat"><div class="hero-stat-value">1</div><div class="hero-stat-label">Account Manager</div></div>
+</div>
+</div>
+<div class="hero-visual animate-fade-in-up animate-delay-2">
+<div class="hero-product-card" id="shirtStage">
+<div class="shirt-glow"></div>
+<div class="shirt-3d" id="shirtTilt">
+<div class="shirt-3d-collar"></div>
+<div class="shirt-3d-body"><div class="shirt-3d-logo">JT</div><div class="shirt-sheen"></div></div>
+</div>
+</div>
+<div class="hero-float-badge badge-1" data-depth="28"><i data-lucide="shield-check" style="width:16px;height:16px;color:var(--success);"></i> Reinforced Seams</div>
+<div class="hero-float-badge badge-2" data-depth="42"><i data-lucide="flame" style="width:16px;height:16px;color:var(--primary);"></i> Made in USA</div>
+<div class="hero-float-badge badge-3" data-depth="20"><i data-lucide="badge-check" style="width:16px;height:16px;color:var(--accent);"></i> Embroidered Branding</div>
+</div>
+</div>
+</div>
+<a class="hero-scroll" onclick="scrollToId('how-it-works')" aria-label="Scroll down"><span class="hero-scroll-wheel"></span><span class="hero-scroll-label">Scroll</span></a>
+</section>
+
+<section class="trust-bar">
+<div class="container">
+<div class="trust-bar-grid">
+<div class="trust-item"><i data-lucide="map-pin" style="width:20px;height:20px;"></i> Made in USA</div>
+<div class="trust-item"><i data-lucide="truck" style="width:20px;height:20px;"></i> 7 to 14 Day Production</div>
+<div class="trust-item"><i data-lucide="layers" style="width:20px;height:20px;"></i> Volume Pricing</div>
+<div class="trust-item"><i data-lucide="user-check" style="width:20px;height:20px;"></i> Dedicated Account Manager</div>
+<div class="trust-item"><i data-lucide="repeat" style="width:20px;height:20px;"></i> Predictable Reorders</div>
+</div>
+</div>
+</section>
+
+<!-- AI Recommended-for-you strip (populated by ai.js once interest is detected) -->
+<section class="section ai-reco" id="aiReco" style="display:none;padding-top:56px;padding-bottom:0;">
+<div class="container">
+<div class="ai-reco-head">
+<div class="section-label"><i data-lucide="sparkles" style="width:14px;height:14px;"></i> <span id="aiRecoLabel">Recommended for you</span></div>
+<span class="ai-reco-tag" id="aiRecoReason">Personalized</span>
+</div>
+<div class="products-grid" id="aiRecoGrid"></div>
+</div>
+</section>
+
+<!-- The premise -->
+<section class="section">
+<div class="container">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="target" style="width:14px;height:14px;"></i> 01 · The Premise</div>
+<h2 class="section-title">A uniform program is infrastructure. Treat it that way.</h2>
+<p class="section-desc">Most companies still buy uniforms reactively. Sizes guessed, vendors switched, replacements ordered every few months. The cost compounds. So does the inconsistency. JT Shirts builds programs designed around how your crews actually work: standardized fits, durable fabrics, predictable reorder cycles, one consistent brand from foreman to field tech.</p>
+</div>
+<div class="features-grid reveal">
+<div class="feature-card"><div class="feature-icon"><i data-lucide="refresh-cw" style="width:28px;height:28px;"></i></div><h3 class="feature-title">Frequent replacements</h3><p class="feature-desc">Low-grade fabric fails in months. Reorders pile up across the year, often at retail-tier pricing because the volume is broken into pieces.</p></div>
+<div class="feature-card"><div class="feature-icon"><i data-lucide="shuffle" style="width:28px;height:28px;"></i></div><h3 class="feature-title">Quality inconsistency</h3><p class="feature-desc">A new batch from a different vendor ships with off-shade fabric, wrong fit, missing logo placement. Crews look mismatched on customer sites.</p></div>
+<div class="feature-card"><div class="feature-icon"><i data-lucide="clipboard-list" style="width:28px;height:28px;"></i></div><h3 class="feature-title">Administrative overhead</h3><p class="feature-desc">Someone in HR or Ops tracks sizes by spreadsheet, chases vendors, fixes mistakes. The hours add up and the work never compounds.</p></div>
+<div class="feature-card"><div class="feature-icon"><i data-lucide="droplet" style="width:28px;height:28px;"></i></div><h3 class="feature-title">Brand dilution</h3><p class="feature-desc">Faded logos. Mismatched colors across sites. Crews show up to a customer looking like contractors from three different companies.</p></div>
+</div>
+</div>
+</section>
+
+<!-- Catalog -->
+<section class="section" style="background:var(--light);">
+<div class="container">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="grid-3x3" style="width:14px;height:14px;"></i> 05 · Catalog</div>
+<h2 class="section-title">Four core categories. Standardized.</h2>
+<p class="section-desc">Engineered for the work. Sized for the crew. Branded once, reordered the same way every cycle. Prices drop as volume climbs.</p>
+</div>
+<div class="products-grid" id="featuredProducts"></div>
+<div class="text-center" style="margin-top:48px;">
+<a class="btn btn-outline btn-lg" onclick="showPage('shop')">View Full Catalog <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
+</div>
+</div>
+</section>
+
+<!-- How we run it -->
+<section class="section" id="how-it-works">
+<div class="container">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="workflow" style="width:14px;height:14px;"></i> 03 · How We Run It</div>
+<h2 class="section-title">One program. Four phases. Built for repeatability.</h2>
+<p class="section-desc">No one-off purchase orders. No ad-hoc reorders. A standardized rhythm your team learns once.</p>
+</div>
+<div class="features-grid reveal">
+<div class="feature-card"><div class="section-label" style="margin-bottom:12px;">Phase · 01</div><h3 class="feature-title">Audit</h3><p class="feature-desc">We map current spend, vendor count, replacement frequency, and brand inconsistency across your sites. Most audits surface 25 to 40 percent of cost hidden in fragmented procurement.</p></div>
+<div class="feature-card"><div class="section-label" style="margin-bottom:12px;">Phase · 02</div><h3 class="feature-title">Standardize</h3><p class="feature-desc">One spec sheet per role. Same fabric, same fit, same logo placement, every order, every crew. Quality controls enforced at production, not after delivery.</p></div>
+<div class="feature-card"><div class="section-label" style="margin-bottom:12px;">Phase · 03</div><h3 class="feature-title">Fulfill</h3><p class="feature-desc">Production runs on a predictable cycle. Lead times locked at 7 to 14 days. Direct ship to your sites or central warehouse. No middlemen.</p></div>
+<div class="feature-card"><div class="section-label" style="margin-bottom:12px;">Phase · 04</div><h3 class="feature-title">Monitor</h3><p class="feature-desc">Quarterly review of replacement rates, brand compliance, cost per crew. Data goes back into the spec. The program gets cheaper and tighter every cycle.</p></div>
+</div>
+</div>
+</section>
+
+<!-- Sectors -->
+<section class="section" style="background:var(--light);">
+<div class="container">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="hard-hat" style="width:14px;height:14px;"></i> 07 · Sectors</div>
+<h2 class="section-title">Crews we equip.</h2>
+</div>
+<div class="features-grid reveal">
+<div class="feature-card"><div class="feature-icon"><i data-lucide="construction" style="width:28px;height:28px;"></i></div><h3 class="feature-title">Construction & Trades</h3><p class="feature-desc">PPE · high turnover · safety compliance.</p></div>
+<div class="feature-card"><div class="feature-icon"><i data-lucide="factory" style="width:28px;height:28px;"></i></div><h3 class="feature-title">Manufacturing</h3><p class="feature-desc">Multi-plant · function-specific spec.</p></div>
+<div class="feature-card"><div class="feature-icon"><i data-lucide="truck" style="width:28px;height:28px;"></i></div><h3 class="feature-title">Logistics & Delivery</h3><p class="feature-desc">Customer-facing fleet · daily wear.</p></div>
+<div class="feature-card"><div class="feature-icon"><i data-lucide="wrench" style="width:28px;height:28px;"></i></div><h3 class="feature-title">Field Services</h3><p class="feature-desc">On-site brand carriers · tool durable.</p></div>
+</div>
+</div>
+</section>
+
+<!-- By the numbers (animated counters) -->
+<section class="section" style="background:var(--light);">
+<div class="container">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="bar-chart-3" style="width:14px;height:14px;"></i> By the Numbers</div>
+<h2 class="section-title">Proof, not promises.</h2>
+</div>
+<div class="counter-grid reveal">
+<div class="counter-box"><div class="counter" data-count="7" data-suffix="">0</div><div class="counter-label">Years in business</div></div>
+<div class="counter-box"><div class="counter" data-count="500" data-suffix="+">0</div><div class="counter-label">Crews equipped</div></div>
+<div class="counter-box"><div class="counter" data-count="1200000" data-suffix="+" data-format="compact">0</div><div class="counter-label">Units shipped</div></div>
+<div class="counter-box"><div class="counter" data-count="98" data-suffix="%">0</div><div class="counter-label">On-time delivery</div></div>
+</div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+<div class="container">
+<div class="cta-grid">
+<div>
+<div class="section-label" style="color:var(--primary);margin-bottom:16px;">08 · Start The Program</div>
+<h2 class="cta-title">Run the audit. See the savings.</h2>
+<p class="cta-desc">A free 15-minute call. We map your current uniform spend, identify cost recovery, and quote a program. No commitment.</p>
+<div class="cta-features">
+<div class="cta-feature"><i data-lucide="check-circle" style="width:20px;height:20px;"></i> Free spend audit and mockup</div>
+<div class="cta-feature"><i data-lucide="check-circle" style="width:20px;height:20px;"></i> Volume pricing from 25 units</div>
+<div class="cta-feature"><i data-lucide="check-circle" style="width:20px;height:20px;"></i> 7 to 14 day production, nationwide</div>
+<div class="cta-feature"><i data-lucide="check-circle" style="width:20px;height:20px;"></i> One account manager, direct line</div>
+</div>
+<a class="btn btn-primary btn-lg" onclick="showPage('audit')">Schedule the Audit <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
+</div>
+<div class="cta-image">
+<div style="background:linear-gradient(135deg,var(--secondary),var(--dark));border-radius:var(--radius-xl);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-xl);">
+<div style="text-align:center;color:white;padding:40px;"><i data-lucide="line-chart" style="width:80px;height:80px;margin-bottom:20px;opacity:0.8;"></i><h3 style="font-family:var(--font-head);font-size:28px;font-weight:800;margin-bottom:8px;">Programs from $1,249</h3><p style="font-size:16px;opacity:0.8;">Three starter programs. One scales with your crew.</p></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ==================== CATALOG (SHOP) PAGE ==================== -->
+<div class="page" id="page-shop">
+<section class="hero" style="padding-top:120px;padding-bottom:40px;">
+<div class="container">
+<div class="text-center" style="max-width:680px;margin:0 auto;">
+<div class="hero-badge" style="margin:0 auto 20px;"><i data-lucide="package" style="width:16px;height:16px;"></i> The Catalog</div>
+<h1 class="hero-title" style="font-size:clamp(32px,4vw,48px);">Build your uniform.</h1>
+<p class="hero-desc" style="margin:0 auto;">Pick a garment, set the color, drop your logo, choose quantity, see your live price. Minimum order is 25 units per item. Prices drop at 50 and 100 units.</p>
+</div>
+</div>
+</section>
+<section class="section" style="padding-top:24px;">
+<div class="container">
+<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:32px;">
+<div id="shopCategories" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+<div style="position:relative;min-width:240px;flex:1;max-width:360px;">
+<i data-lucide="search" style="width:18px;height:18px;position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+<input id="shopSearch" class="form-input" style="padding-left:44px;" placeholder="Search workwear..." oninput="onShopSearch(this.value)">
+</div>
+</div>
+<div class="products-grid" id="shopProducts"></div>
+<div id="shopEmpty" class="text-center hidden" style="padding:60px 0;color:var(--text-muted);">
+<i data-lucide="search-x" style="width:56px;height:56px;"></i>
+<p style="margin-top:16px;font-size:16px;">No products match your filters.</p>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ==================== CONFIGURE (PRODUCT) PAGE ==================== -->
+<div class="page" id="page-product">
+<section class="product-detail">
+<div class="container">
+<div class="product-detail-grid">
+<div class="product-gallery">
+<div class="product-gallery-main"><img src="" alt="Product" id="pdMainImage"></div>
+<div class="product-gallery-thumbs" id="pdThumbs"></div>
+</div>
+<div class="product-info-detail">
+<div class="product-detail-badges" id="pdBadges"></div>
+<div class="section-label" style="margin-bottom:8px;">Configure · <span id="pdCategory"></span></div>
+<h1 class="product-detail-title" id="pdTitle">Product Name</h1>
+<div class="product-detail-rating">
+<div style="display:flex;gap:2px;" id="pdStars"></div>
+<span style="color:var(--text-secondary);font-size:14px;" id="pdReviewCount">(0 reviews)</span>
+</div>
+<div class="product-detail-price">
+<span style="font-size:13px;color:var(--text-muted);font-family:var(--font-mono);">FROM</span>
+<span class="product-detail-price-current" id="pdPrice">$0.00</span>
+<span style="font-size:14px;color:var(--text-muted);">/ unit</span>
+</div>
+
+<div class="product-detail-section">
+<div class="product-detail-section-title">Step 01 · Color</div>
+<div class="color-options" id="pdColors"></div>
+</div>
+
+<div class="product-detail-section" id="pdSizeSection">
+<div class="product-detail-section-title">Step 02 · Size</div>
+<div class="size-options" id="pdSizes"></div>
+<a class="size-guide-link" onclick="openSizeModal()"><i data-lucide="ruler" style="width:14px;height:14px;"></i> Size Guide</a>
+</div>
+
+<div class="product-detail-section" id="pdLogoSection">
+<div class="product-detail-section-title">Step 03 · Logo</div>
+<div class="size-options" id="pdLogoPositions"></div>
+<label class="logo-drop" id="pdLogoDrop">
+<input type="file" id="pdLogoFile" accept="image/png,image/jpeg,image/svg+xml" style="display:none;" onchange="onLogoPick(this)">
+<i data-lucide="upload-cloud" style="width:22px;height:22px;"></i>
+<span id="pdLogoLabel">Drop logo here or click to upload</span>
+<small style="color:var(--text-muted);">PNG, JPG, SVG · max 5MB · optional</small>
+</label>
+</div>
+
+<div class="product-detail-section">
+<div class="product-detail-section-title">Step 04 · Quantity <span style="color:var(--text-muted);font-weight:500;text-transform:none;letter-spacing:0;" id="pdMinNote"></span></div>
+<div class="quantity-selector">
+<button class="quantity-btn" onclick="changeQty(-25)">-</button>
+<input type="number" class="quantity-input" id="pdQty" value="25" min="25" step="1" oninput="onQtyInput(this.value)">
+<button class="quantity-btn" onclick="changeQty(25)">+</button>
+</div>
+<div id="pdTierTable" class="tier-table"></div>
+</div>
+
+<div class="quote-box" id="pdQuote"></div>
+
+<div class="product-actions">
+<button class="btn btn-primary btn-lg" id="pdAddToCart" onclick="addToCartFromPD()"><i data-lucide="shopping-bag" style="width:20px;height:20px;"></i> Add to Order</button>
+<button class="btn btn-outline btn-lg" onclick="showPage('shop')">Back to Catalog</button>
+</div>
+
+<div class="product-trust-badges">
+<div class="product-trust-item"><i data-lucide="map-pin" style="width:24px;height:24px;"></i><span>Made<br>in USA</span></div>
+<div class="product-trust-item"><i data-lucide="truck" style="width:24px;height:24px;"></i><span>7-14 Day<br>Production</span></div>
+<div class="product-trust-item"><i data-lucide="badge-check" style="width:24px;height:24px;"></i><span>Embroidered<br>Branding</span></div>
+</div>
+
+<div class="product-detail-section" style="margin-top:40px;padding-top:28px;border-top:1px solid var(--border);">
+<div class="product-detail-section-title">Description</div>
+<p style="color:var(--text-secondary);line-height:1.7;" id="pdDescription"></p>
+</div>
+<div class="product-detail-section">
+<div class="product-detail-section-title">Specifications</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="pdSpecs"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="sticky-add-cart" id="stickyAddCart">
+<div class="sticky-add-cart-info">
+<img src="" alt="" class="sticky-add-cart-img" id="stickyImg">
+<div><div class="sticky-add-cart-title" id="stickyTitle">Product Name</div><div class="sticky-add-cart-price" id="stickyPrice">$0.00</div></div>
+</div>
+<button class="btn btn-primary" onclick="addToCartFromPD()"><i data-lucide="shopping-bag" style="width:18px;height:18px;"></i> Add to Order</button>
+</div>
+</div>
+
+<!-- ==================== PROGRAMS PAGE ==================== -->
+<div class="page" id="page-programs">
+<section class="hero" style="padding-top:120px;padding-bottom:40px;">
+<div class="container">
+<div class="text-center" style="max-width:680px;margin:0 auto;">
+<div class="hero-badge" style="margin:0 auto 20px;"><i data-lucide="boxes" style="width:16px;height:16px;"></i> 06 · Programs</div>
+<h1 class="hero-title" style="font-size:clamp(32px,4vw,48px);">Three starter programs.</h1>
+<p class="hero-desc" style="margin:0 auto;">One scales with your crew. Fixed-price bundles to launch a standardized uniform program fast.</p>
+</div>
+</div>
+</section>
+<section class="section" style="padding-top:24px;">
+<div class="container">
+<div class="programs-grid" id="programsGrid"></div>
+<div class="text-center" style="margin-top:48px;color:var(--text-secondary);">
+<p>Not sure which fits? <a onclick="showPage('contact')" style="color:var(--primary);cursor:pointer;font-weight:600;">Book a free audit</a> and we will map a program to your crew.</p>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ==================== FREE AUDIT PAGE ==================== -->
+<div class="page" id="page-audit">
+<section class="hero" style="padding-top:120px;padding-bottom:40px;">
+<div class="container">
+<div class="hero-grid" style="align-items:center;">
+<div>
+<div class="hero-badge"><i data-lucide="calculator" style="width:16px;height:16px;"></i> Free Uniform Audit · 15 min · No contract</div>
+<h1 class="hero-title" style="font-size:clamp(30px,4vw,52px);">Find out what you're <span>overpaying</span> for uniforms.</h1>
+<p class="hero-desc">We analyze your current uniform spend, benchmark it against industry standards, and show you exactly where you can save. No pitch. No pressure. Just numbers.</p>
+<div class="hero-cta-group">
+<a class="btn btn-primary btn-lg" onclick="scrollToId('audit-form')">Get My Free Audit <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
+<a class="btn btn-outline btn-lg" onclick="scrollToId('audit-calc')">See the Calculator</a>
+</div>
+<div class="audit-check-row">
+<span><i data-lucide="check" style="width:15px;height:15px;"></i> 15-minute call</span>
+<span><i data-lucide="check" style="width:15px;height:15px;"></i> Custom savings report</span>
+<span><i data-lucide="check" style="width:15px;height:15px;"></i> Zero commitment</span>
+</div>
+</div>
+<div class="sample-audit">
+<div class="sample-audit-label">Sample Audit · HVAC, 28 Employees</div>
+<div class="sample-audit-hero">$4,320</div>
+<div class="sample-audit-sub">Projected annual savings vs. current vendor</div>
+<div class="sample-audit-rows">
+<div><span>Current annual spend</span><span>$14,560</span></div>
+<div><span>JT Shirts equivalent</span><span>$10,240</span></div>
+<div><span>Savings</span><span style="color:var(--success);font-weight:800;">29.7%</span></div>
+<div><span>Payback period</span><span>Immediate</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section" style="padding-top:40px;">
+<div class="container">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="list-checks" style="width:14px;height:14px;"></i> How the Audit Works</div>
+<h2 class="section-title">Three steps. Real numbers. No pressure.</h2>
+</div>
+<div class="features-grid reveal">
+<div class="feature-card"><div class="step-num">01</div><h3 class="feature-title">Quick form</h3><p class="feature-desc">Tell us your industry, team size, and what you currently spend. Takes under 90 seconds.</p></div>
+<div class="feature-card"><div class="step-num">02</div><h3 class="feature-title">15-minute call</h3><p class="feature-desc">We walk through your numbers, your current vendor's pricing, and the gaps. You ask anything.</p></div>
+<div class="feature-card"><div class="step-num">03</div><h3 class="feature-title">Custom report</h3><p class="feature-desc">A one-page PDF showing your current spend, the JT Shirts equivalent, and projected savings. Yours to keep.</p></div>
+</div>
+</div>
+</section>
+
+<!-- Live calculator -->
+<section class="section" id="audit-calc" style="background:var(--light);">
+<div class="container">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="trending-down" style="width:14px;height:14px;"></i> Instant Estimate</div>
+<h2 class="section-title">See your savings in real time.</h2>
+<p class="section-desc">Plug in your numbers. We show you the math instantly, no email required. The full audit refines this with vendor pricing, lead time, and quality variables.</p>
+</div>
+<div class="calc-card reveal">
+<div class="calc-inputs">
+<div class="calc-field">
+<label>Number of employees</label>
+<input type="number" id="calcEmployees" value="28" min="1" oninput="runCalc()">
+</div>
+<div class="calc-field">
+<label>Uniforms per employee / year</label>
+<input type="number" id="calcPerYear" value="5" min="1" oninput="runCalc()">
+</div>
+<div class="calc-field">
+<label>Average cost per uniform ($)</label>
+<input type="number" id="calcCost" value="32" min="1" step="0.5" oninput="runCalc()">
+</div>
+</div>
+<div class="calc-results">
+<div class="calc-result"><span>Current annual spend</span><strong id="calcCurrent">$0</strong></div>
+<div class="calc-result"><span>JT Shirts estimated spend</span><strong id="calcJt">$0</strong></div>
+<div class="calc-result highlight"><span>Annual savings with JT Shirts</span><strong id="calcSavings">$0</strong></div>
+<a class="btn btn-primary btn-full" onclick="scrollToId('audit-form')">Get My Full Audit <i data-lucide="arrow-right" style="width:16px;height:16px;"></i></a>
+<p class="calc-note">Estimate based on industry averages for field-service SMBs. The full audit produces a custom report with your exact vendor benchmarks.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Comparison -->
+<section class="section">
+<div class="container">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="git-compare" style="width:14px;height:14px;"></i> Why Teams Switch</div>
+<h2 class="section-title">JT Shirts vs. the alternatives.</h2>
+</div>
+<div class="compare-wrap reveal">
+<table class="compare-table">
+<thead><tr><th></th><th>Big Rental Contracts</th><th class="compare-us">JT Shirts</th></tr></thead>
+<tbody>
+<tr><td>Contract</td><td>3-5 year lock-in</td><td class="compare-us">No contract, ever</td></tr>
+<tr><td>Setup fees</td><td>$150-$300 per logo</td><td class="compare-us">$0 on first order</td></tr>
+<tr><td>Minimum order</td><td>High recurring minimums</td><td class="compare-us">Starts at 25 units, any style</td></tr>
+<tr><td>Lead time</td><td>2-4 weeks typical</td><td class="compare-us">5 business days</td></tr>
+<tr><td>Risk reversal</td><td>Non-refundable</td><td class="compare-us">30-day money-back</td></tr>
+<tr><td>Custom branding</td><td>Limited styles</td><td class="compare-us">Full embroidery &amp; screen print</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- Audit form -->
+<section class="section" id="audit-form" style="background:var(--light);">
+<div class="container">
+<div class="checkout-grid">
+<div class="reveal">
+<div class="section-label"><i data-lucide="file-check" style="width:14px;height:14px;"></i> Book Your Free Audit</div>
+<h2 class="section-title" style="text-align:left;">We reply within 24 business hours.</h2>
+<p class="section-desc" style="text-align:left;">No sales pitch on the form, just the data we need to make the audit useful.</p>
+<ul class="audit-benefits">
+<li><i data-lucide="check-circle" style="width:18px;height:18px;"></i> Full breakdown of your current spend</li>
+<li><i data-lucide="check-circle" style="width:18px;height:18px;"></i> Custom one-page PDF report to keep</li>
+<li><i data-lucide="check-circle" style="width:18px;height:18px;"></i> Direct comparison with industry benchmarks</li>
+<li><i data-lucide="check-circle" style="width:18px;height:18px;"></i> Zero commitment, no follow-up spam</li>
+</ul>
+</div>
+<div class="reveal">
+<div class="contact-form">
+<h3 style="font-family:var(--font-head);font-size:20px;font-weight:800;margin-bottom:6px;">Get your audit</h3>
+<p style="color:var(--text-muted);font-size:13px;margin-bottom:20px;">Takes under 90 seconds.</p>
+<div class="form-row">
+<div class="form-group"><label class="form-label">First Name *</label><input class="form-input" id="auFirst" placeholder="John"></div>
+<div class="form-group"><label class="form-label">Last Name</label><input class="form-input" id="auLast" placeholder="Doe"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label class="form-label">Work Email *</label><input type="email" class="form-input" id="auEmail" placeholder="john@company.com"></div>
+<div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="auPhone" placeholder="+1 (216) 555-0100"></div>
+</div>
+<div class="form-group"><label class="form-label">Company</label><input class="form-input" id="auCompany" placeholder="Company name"></div>
+<div class="form-row">
+<div class="form-group"><label class="form-label">Team Size</label><select class="form-select" id="auTeam"><option value="">Select...</option><option>1-10</option><option>11-25</option><option>26-50</option><option>51-100</option><option>100+</option></select></div>
+<div class="form-group"><label class="form-label">Industry</label><select class="form-select" id="auIndustry"><option value="">Select...</option><option>HVAC</option><option>Plumbing</option><option>Electrical</option><option>Landscaping</option><option>Pest control</option><option>Roofing</option><option>Cleaning / Janitorial</option><option>Auto repair / Body shop</option><option>Moving / Logistics</option><option>Construction</option><option>Other</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label class="form-label">Order Frequency</label><select class="form-select" id="auFreq"><option value="">Select...</option><option>Monthly</option><option>Quarterly</option><option>Semi-annual</option><option>Annual</option><option>One-off / project-based</option></select></div>
+<div class="form-group"><label class="form-label">Units in Last Order</label><input type="number" class="form-input" id="auUnits" placeholder="e.g. 120"></div>
+</div>
+<button class="btn btn-primary btn-full btn-lg" id="auSubmit" onclick="submitAudit()"><i data-lucide="send" style="width:18px;height:18px;"></i> Book My Free Audit</button>
+<p style="font-size:12px;color:var(--text-muted);margin-top:12px;text-align:center;">Your info is sent only to JT Shirts sales. No marketing emails unless you ask.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+<div class="container container-narrow">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="help-circle" style="width:14px;height:14px;"></i> FAQ</div>
+<h2 class="section-title">Common questions.</h2>
+</div>
+<div class="faq-list reveal" id="faqList"></div>
+</div>
+</section>
+</div>
+
+<!-- ==================== FREE MOCKUP PAGE ==================== -->
+<div class="page" id="page-mockup">
+<section class="hero" style="padding-top:120px;padding-bottom:40px;">
+<div class="container">
+<div class="text-center" style="max-width:680px;margin:0 auto;">
+<div class="hero-badge" style="margin:0 auto 20px;"><i data-lucide="image" style="width:16px;height:16px;"></i> Free Mockup Tool · No Signup</div>
+<h1 class="hero-title" style="font-size:clamp(30px,4vw,52px);">See your team in your gear. <span>In 60 seconds.</span></h1>
+<p class="hero-desc" style="margin:0 auto;">Upload your logo. We show you exactly what your polos and caps will look like with your branding. Free, instant, no commitment.</p>
+<div class="audit-check-row" style="justify-content:center;">
+<span><i data-lucide="check" style="width:15px;height:15px;"></i> Free forever</span>
+<span><i data-lucide="check" style="width:15px;height:15px;"></i> No signup to preview</span>
+<span><i data-lucide="check" style="width:15px;height:15px;"></i> Download in HD</span>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section" style="padding-top:24px;">
+<div class="container">
+<div class="mockup-grid reveal">
+<div>
+<label class="logo-drop" id="mkDrop" style="min-height:220px;">
+<input type="file" id="mkFile" accept="image/png,image/jpeg,image/svg+xml" style="display:none;" onchange="onMockupLogo(this)">
+<i data-lucide="upload-cloud" style="width:32px;height:32px;"></i>
+<span style="font-size:16px;">Drop your logo here</span>
+<small>or click to browse — PNG, JPG, SVG up to 10MB</small>
+</label>
+<div class="mockup-tip"><i data-lucide="info" style="width:16px;height:16px;"></i> <span>Best results: a high-resolution PNG or SVG with a transparent background. Square or horizontal logos work best. If your logo has a colored background, we can clean it up free, just mention it when you book your audit.</span></div>
+</div>
+<div class="mockup-previews">
+<div class="mockup-item">
+<div class="mockup-garment polo">
+<div class="mockup-logo" id="mkPoloLogo"></div>
+</div>
+<div class="mockup-caption">Polo · Left chest</div>
+</div>
+<div class="mockup-item">
+<div class="mockup-garment cap">
+<div class="mockup-logo" id="mkCapLogo"></div>
+</div>
+<div class="mockup-caption">Cap · Front panel</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section" style="background:var(--light);">
+<div class="container">
+<div class="section-header reveal">
+<div class="section-label"><i data-lucide="calculator" style="width:14px;height:14px;"></i> Why This Matters</div>
+<h2 class="section-title">The math is simple.</h2>
+</div>
+<div class="features-grid reveal">
+<div class="feature-card"><div class="big-num">25</div><h3 class="feature-title">Polo minimum</h3><p class="feature-desc">Our First Run Mini Pack starts at 25 polos for $499. No subscription, no contract, no setup fee. Just polos.</p></div>
+<div class="feature-card"><div class="big-num">5</div><h3 class="feature-title">Day lead time</h3><p class="feature-desc">From logo approval to shipped order. Compare to 2-4 weeks at the big rental vendors and you see why teams switch.</p></div>
+<div class="feature-card"><div class="big-num">30</div><h3 class="feature-title">Day guarantee</h3><p class="feature-desc">Don't love them after 30 days? We send a shipping label, you ship them back, full refund. Zero risk.</p></div>
+</div>
+<div class="mini-pack reveal">
+<div>
+<div class="section-label" style="color:var(--primary);">First Run Mini Pack</div>
+<h3 style="font-family:var(--font-head);font-size:28px;font-weight:900;margin:6px 0;">25 custom polos for $499</h3>
+<p style="color:var(--text-secondary);">No subscription. No contract. No setup fee. The easiest way to try JT Shirts.</p>
+</div>
+<a class="btn btn-primary btn-lg" onclick="showPage('shop')">Start Your Order <i data-lucide="arrow-right" style="width:18px;height:18px;"></i></a>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ==================== BLOG PAGE ==================== -->
+<div class="page" id="page-blog">
+<section class="hero" style="padding-top:120px;padding-bottom:40px;">
+<div class="container">
+<div class="text-center" style="max-width:720px;margin:0 auto;">
+<div class="hero-badge" style="margin:0 auto 20px;"><i data-lucide="book-open" style="width:16px;height:16px;"></i> JT Shirts Blog</div>
+<h1 class="hero-title" style="font-size:clamp(30px,4vw,48px);">Field guides for uniform strategy.</h1>
+<p class="hero-desc" style="margin:0 auto;">Specifications, cost benchmarks, vendor comparisons, OSHA compliance, and branding playbooks. Built for owners who treat uniforms as a P&amp;L line, not a cost center.</p>
+</div>
+</div>
+</section>
+<section class="section" style="padding-top:24px;">
+<div class="container">
+<div class="blog-grid" id="blogGrid"></div>
+<div class="service-areas reveal">
+<h4><i data-lucide="map-pin" style="width:16px;height:16px;"></i> Local service areas</h4>
+<div class="service-area-tags">
+<span>Dallas-Fort Worth, TX</span>
+<span>Phoenix Metro, AZ</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ==================== CHECKOUT PAGE ==================== -->
+<div class="page" id="page-checkout">
+<section class="section" style="padding-top:120px;">
+<div class="container">
+<div class="text-center" style="max-width:640px;margin:0 auto 40px;">
+<div class="hero-badge" style="margin:0 auto 16px;"><i data-lucide="lock" style="width:16px;height:16px;"></i> Secure Checkout</div>
+<h1 class="hero-title" style="font-size:clamp(28px,4vw,40px);">Checkout</h1>
+</div>
+<div class="checkout-grid">
+<div>
+<div class="contact-form">
+<h3 style="font-family:var(--font-head);font-size:20px;font-weight:800;margin-bottom:24px;">Company & Shipping</h3>
+<div class="form-row">
+<div class="form-group"><label class="form-label">First Name *</label><input type="text" class="form-input" id="coFirstName" placeholder="John"></div>
+<div class="form-group"><label class="form-label">Last Name *</label><input type="text" class="form-input" id="coLastName" placeholder="Doe"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label class="form-label">Work Email *</label><input type="email" class="form-input" id="coEmail" placeholder="john@company.com"></div>
+<div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="coPhone" placeholder="+1 (216) 555-0100"></div>
+</div>
+<div class="form-group"><label class="form-label">Company</label><input type="text" class="form-input" id="coCompany" placeholder="Company name"></div>
+<div class="form-group"><label class="form-label">Ship-to Address</label><input type="text" class="form-input" id="coAddress" placeholder="Site or central warehouse"></div>
+<div class="form-row">
+<div class="form-group"><label class="form-label">City</label><input type="text" class="form-input" id="coCity" placeholder="Cleveland"></div>
+<div class="form-group"><label class="form-label">ZIP</label><input type="text" class="form-input" id="coZip" placeholder="44114"></div>
+</div>
+<div class="form-group"><label class="form-label">Country</label><input type="text" class="form-input" id="coCountry" value="United States"></div>
+<button class="btn btn-primary btn-full btn-lg" id="coPlaceOrder" onclick="placeOrder()"><i data-lucide="lock" style="width:18px;height:18px;"></i> Place Order</button>
+<div class="pay-note"><i data-lucide="info" style="width:16px;height:16px;flex-shrink:0;color:var(--primary);"></i> <span>This is a demo checkout. No card is charged. Your order is saved to the store database so you can see the full B2B flow. Add a Stripe key to accept live payments, or wire this to your quote workflow.</span></div>
+</div>
+</div>
+<div>
+<div class="checkout-summary">
+<h3 style="font-family:var(--font-head);font-size:18px;font-weight:800;margin-bottom:8px;">Order Summary</h3>
+<div id="checkoutItems"></div>
+<div class="checkout-line"><span>Subtotal</span><span id="coSubtotal">$0.00</span></div>
+<div class="checkout-line"><span>Shipping</span><span id="coShipping">$0.00</span></div>
+<div class="checkout-line"><span>Tax</span><span id="coTax">$0.00</span></div>
+<div class="checkout-line total"><span>Total</span><span id="coTotal">$0.00</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ==================== ORDER CONFIRMATION PAGE ==================== -->
+<div class="page" id="page-confirm">
+<section class="section" style="padding-top:140px;">
+<div class="container">
+<div class="confirm-wrap">
+<div class="confirm-check"><i data-lucide="check" style="width:48px;height:48px;"></i></div>
+<h1 class="hero-title" style="font-size:clamp(28px,4vw,40px);">Order Confirmed</h1>
+<p class="hero-desc" style="margin:12px auto 0;">Thank you. Your order is recorded and your account manager will confirm the spec and production schedule.</p>
+<div class="confirm-order-box" id="confirmBox"></div>
+<div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+<a class="btn btn-primary" onclick="showPage('shop')">Back to Catalog</a>
+<a class="btn btn-outline" onclick="showPage('home')">Home</a>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ==================== CONTACT PAGE ==================== -->
+<div class="page" id="page-contact">
+<section class="hero" style="padding-top:120px;padding-bottom:40px;">
+<div class="container">
+<div class="text-center" style="max-width:640px;margin:0 auto;">
+<div class="hero-badge" style="margin:0 auto 20px;"><i data-lucide="phone-call" style="width:16px;height:16px;"></i> Start the Program</div>
+<h1 class="hero-title" style="font-size:clamp(32px,4vw,48px);">Run the audit. See the savings.</h1>
+<p class="hero-desc" style="margin:0 auto;">Free 15-minute call. We map your uniform spend, identify cost recovery, and quote a program. No commitment.</p>
+</div>
+</div>
+</section>
+<section class="section" style="padding-top:0;">
+<div class="container">
+<div class="contact-grid">
+<div class="reveal">
+<div class="contact-info-card"><div class="contact-info-icon"><i data-lucide="mail" style="width:24px;height:24px;"></i></div><div class="contact-info-content"><h4>Email Sales</h4><p>salesdept@jtshirts.net</p><p style="margin-top:4px;">We reply within 24 hours</p></div></div>
+<div class="contact-info-card"><div class="contact-info-icon"><i data-lucide="phone" style="width:24px;height:24px;"></i></div><div class="contact-info-content"><h4>Call Us</h4><p>+1 (216) 553-0881</p><p style="margin-top:4px;">Mon to Fri · 9am to 5pm EST</p></div></div>
+<div class="contact-info-card"><div class="contact-info-icon"><i data-lucide="factory" style="width:24px;height:24px;"></i></div><div class="contact-info-content"><h4>Made in USA</h4><p>Domestic production</p><p style="margin-top:4px;">7 to 14 day lead, nationwide</p></div></div>
+<div class="contact-info-card"><div class="contact-info-icon"><i data-lucide="clock" style="width:24px;height:24px;"></i></div><div class="contact-info-content"><h4>Business Hours</h4><p>Monday to Friday: 9am - 5pm EST</p><p style="margin-top:4px;">Account managers on call</p></div></div>
+</div>
+<div class="reveal">
+<div class="contact-form">
+<h3 style="font-family:var(--font-head);font-size:22px;font-weight:800;margin-bottom:24px;">Request a Quote or Audit</h3>
+<div class="form-row">
+<div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-input" id="ctFirstName" placeholder="John"></div>
+<div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-input" id="ctLastName" placeholder="Doe"></div>
+</div>
+<div class="form-group"><label class="form-label">Work Email *</label><input type="email" class="form-input" id="ctEmail" placeholder="john@company.com"></div>
+<div class="form-group"><label class="form-label">Company</label><input type="text" class="form-input" id="ctCompany" placeholder="Your company name"></div>
+<div class="form-group"><label class="form-label">Inquiry Type</label><select class="form-select" id="ctInquiry"><option>Free audit</option><option>Bulk order quote</option><option>Custom branding / mockup</option><option>Program pricing</option><option>General question</option></select></div>
+<div class="form-group"><label class="form-label">Crew size / details *</label><textarea class="form-textarea" id="ctMessage" placeholder="How many crew, which garments, current vendor, and any deadlines."></textarea></div>
+<button class="btn btn-primary btn-full" id="ctSubmit" onclick="submitContact()"><i data-lucide="send" style="width:18px;height:18px;"></i> Send Request</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+<div class="container">
+<div class="footer-grid">
+<div class="footer-brand">
+<a class="footer-logo" onclick="showPage('home')"><div class="footer-logo-icon">JT</div><div class="footer-logo-text">JT <span>Shirts</span></div></a>
+<p class="footer-desc">Built for crews on construction sites, manufacturing floors, and service routes. Custom workwear, programmed for repeatability. Made in USA.</p>
+<div class="footer-social">
+<a aria-label="LinkedIn" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+<a aria-label="Instagram" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.31-1.46.72-2.12 1.38C1.35 2.67.94 3.34.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.8.72 1.47 1.38 2.13.66.66 1.33 1.07 2.12 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.8-.31 1.47-.72 2.13-1.38.66-.66 1.07-1.33 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.12A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32A6.16 6.16 0 0 0 12 5.84zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg></a>
+<a aria-label="X" href="#"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.46l8.6-9.83L0 1.15h7.6l5.24 6.93 6.06-6.93zm-1.29 19.5h2.04L6.48 3.24H4.29L17.61 20.65z"/></svg></a>
+</div>
+</div>
+<div class="footer-col"><h4>Catalog</h4><ul class="footer-links">
+<li><a onclick="showShopCategory('Polos')">Polos</a></li>
+<li><a onclick="showShopCategory('Work Shirts')">Work Shirts</a></li>
+<li><a onclick="showShopCategory('Jackets')">Jackets</a></li>
+<li><a onclick="showShopCategory('Caps')">Caps</a></li>
+</ul></div>
+<div class="footer-col"><h4>Company</h4><ul class="footer-links">
+<li><a onclick="showPage('home'); scrollToId('how-it-works')">How it works</a></li>
+<li><a onclick="showPage('audit')">Free audit</a></li>
+<li><a onclick="showPage('mockup')">Free mockup</a></li>
+<li><a onclick="showPage('programs')">Programs & pricing</a></li>
+<li><a onclick="showPage('blog')">Blog</a></li>
+<li><a onclick="showPage('shop')">Build a uniform</a></li>
+<li><a href="/admin.html" target="_blank" rel="noopener">Admin</a></li>
+</ul></div>
+<div class="footer-col"><h4>Contact</h4><ul class="footer-links">
+<li><a href="mailto:salesdept@jtshirts.net">salesdept@jtshirts.net</a></li>
+<li><a href="tel:+12165530881">+1 (216) 553-0881</a></li>
+<li><a>Mon to Fri · 9am to 5pm EST</a></li>
+</ul></div>
+</div>
+<div class="footer-bottom">
+<div class="footer-copyright">&copy; 2026 JT Shirts · All rights reserved · Built for work · Made in USA</div>
+<div style="display:flex;gap:12px;align-items:center;">
+<span style="font-size:13px;color:rgba(255,255,255,0.5);">We accept:</span>
+<div style="display:flex;gap:8px;">
+<div style="width:40px;height:26px;background:rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.6);font-weight:700;">VISA</div>
+<div style="width:40px;height:26px;background:rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.6);font-weight:700;">MC</div>
+<div style="width:40px;height:26px;background:rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.6);font-weight:700;">AMEX</div>
+<div style="width:40px;height:26px;background:rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.6);font-weight:700;">ACH</div>
+</div>
+</div>
+</div>
+</div>
+</footer>
+
+<script src="/js/app.js?v=3"></script>
+<script src="/js/ai.js?v=3"></script>
+<script src="/js/hero.js?v=1"></script>
+</body>
+</html>
